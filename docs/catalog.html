@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="Каталог EGO Beauty: моделирующие гели, гель-лаки и полигели с ценами сайта, Wildberries и Ozon.">
+  <title>Каталог — EGO Beauty</title>
+  <link rel="icon" href="./assets/ego-logo.png">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./app.js" defer></script>
+</head>
+<body data-page="catalog">
+  <a class="skip-link" href="#main">К основному содержанию</a>
+  <div id="site-header"></div>
+
+  <main id="main" class="catalog-page shell">
+    <section class="catalog-hero"><img src="./assets/banner-1.jpg" alt="Каталог EGO Beauty"><i></i><h1>каталог</h1></section>
+    <nav class="breadcrumbs" aria-label="Хлебные крошки"><a href="./index.html">Главная</a><span>Каталог</span></nav>
+
+    <section class="catalog-heading">
+      <div><p id="product-count">Товары EGO Beauty</p><h2 id="catalog-title">все товары</h2></div>
+      <button class="round-button" id="filter-toggle" type="button" aria-expanded="false" aria-controls="catalog-filters">≡<span class="visually-hidden">Фильтры</span></button>
+    </section>
+
+    <section class="catalog-controls" id="catalog-filters">
+      <div class="filter-group" data-filter="category">
+        <button class="active" data-value="">Все</button>
+        <button data-value="Гели для моделирования ногтей">Гели</button>
+        <button data-value="Гель-лак">Гель-лаки</button>
+        <button data-value="Полигели">Полигели</button>
+        <button data-value="Наборы">Наборы</button>
+      </div>
+      <div class="filter-group" data-filter="collection">
+        <button class="active" data-value="">Все коллекции</button>
+        <button data-value="Mousse">Mousse</button>
+        <button data-value="Glow Cat">Glow Cat</button>
+        <button data-value="Ice Cat">Ice Cat</button>
+      </div>
+      <label class="sort-control">Сортировка
+        <select id="sort-products"><option value="popular">По популярности</option><option value="price-asc">Сначала дешевле</option><option value="price-desc">Сначала дороже</option></select>
+      </label>
+    </section>
+
+    <section class="product-grid" id="product-grid" aria-live="polite"></section>
+    <div class="empty-state" id="empty-state" hidden><h3>Пока ничего не найдено</h3><p>Выберите другую категорию или коллекцию.</p><button class="pill dark" id="reset-filters">Сбросить фильтры</button></div>
+  </main>
+
+  <div id="site-footer"></div>
+  <div id="overlays"></div>
+</body>
+</html>
