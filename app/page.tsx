@@ -1,75 +1,59 @@
 import Image from "next/image";
 import Link from "next/link";
-import { catalogTree, products } from "@/lib/products";
 import { EditorialHero } from "./components/editorial-hero";
-import { ProductRail } from "./components/product-card";
+
+const categoryCards = [
+  { title: "Базы", image: "/products/945458176.webp", href: "/catalog?category=Гели%20для%20моделирования%20ногтей" },
+  { title: "Уход", image: "/products/1272097452.webp", href: "/catalog?category=Уходовые%20средства" },
+  { title: "Топы", image: "/products/1141151914.webp", href: "/catalog?category=Топы" },
+];
+
+const promoCards = [
+  { title: "Новинки", image: "/products/1272155829-3.webp", href: "/catalog?badge=Новинка", className: "new" },
+  { title: "Скидки", image: "/products/1046546817-2.webp", href: "/catalog?badge=Sale", className: "sale" },
+  { title: "Бестселлеры", image: "/products/945458176-3.webp", href: "/catalog?badge=Хит", className: "best" },
+];
 
 export default function Home() {
-  const newItems = products.filter((product) => product.badge === "Новинка").slice(0, 5);
-  const bestsellers = products.filter((product) => product.badge === "Хит").slice(0, 5);
-
   return (
     <>
       <EditorialHero />
 
-      <section className="editorial-manifesto shell">
-        <p>( ego beauty / professional )</p>
-        <h1>Материалы для тех,<br />кто знает, чего хочет.</h1>
-        <div><span>Профессиональные формулы</span><p>Создаём палитры и текстуры, к которым мастер возвращается каждый рабочий день.</p></div>
-      </section>
-
-      <section className="editorial-category-index shell">
-        <div className="editorial-section-title"><span>( 01 )</span><h2>каталог</h2><Link href="/catalog">( смотреть всё )</Link></div>
-        <div className="editorial-category-list">
-          {catalogTree.slice(0, 7).map((section, index) => (
-            <Link key={section.name} href={`/catalog?category=${encodeURIComponent(section.name)}`}>
-              <span>{String(index + 1).padStart(2, "0")}</span>
-              <strong>{section.name}</strong>
-              <small>{section.subcategories.slice(0, 3).join(" · ")}</small>
-              <b>↗</b>
+      <section className="figma-category-section shell" aria-labelledby="category-heading">
+        <div className="figma-section-heading">
+          <h2 id="category-heading">Выберите категорию</h2>
+          <div className="figma-round-arrows" aria-hidden="true"><span>←</span><span>→</span></div>
+        </div>
+        <div className="figma-category-cards">
+          {categoryCards.map((card) => (
+            <Link className="figma-image-card" href={card.href} key={card.title}>
+              <Image src={card.image} alt={card.title} fill sizes="(max-width: 720px) 90vw, 31vw" />
+              <span>{card.title}</span>
             </Link>
           ))}
         </div>
+        <Link className="figma-pill dark centered" href="/catalog">Смотреть все</Link>
       </section>
 
-      <ProductRail title="новинки" kicker="( 02 / только появились )" items={newItems} href="/catalog?badge=Новинка" />
-
-      <section className="editorial-story shell" id="brand-story">
-        <div className="editorial-story-image"><Image src="/brand/mousse-story.jpg" alt="Коллекция Mousse — моделирующие гели EGO Beauty" fill sizes="(max-width: 800px) 100vw, 54vw" /></div>
-        <div className="editorial-story-copy">
-          <span>( наша философия )</span>
-          <h2>больше, чем<br />просто материалы</h2>
-          <p>Мы создаём продукты для мастеров уже много лет, совершенствуем формулы, палитры и качество, чтобы каждая работа была удобной, точной и вдохновляющей.</p>
-          <div className="editorial-story-stats"><div><strong>52</strong><small>набора гель-лаков</small></div><div><strong>311</strong><small>оттенков</small></div><div><strong>135</strong><small>оттенков гелей</small></div></div>
-          <Link href="/about">( читать больше )</Link>
+      <section className="figma-about-banner shell">
+        <Image src="/products/1272155829-3.webp" alt="Текстура материалов EGO Beauty" fill sizes="100vw" />
+        <div className="figma-about-copy">
+          <p>EGO BEAUTY</p>
+          <h2>больше, чем<br /><em>просто материалы</em></h2>
+          <Link className="figma-pill outline-light" href="/about">О бренде</Link>
         </div>
       </section>
 
-      <section className="editorial-quote shell">
-        <p>The work you do with love becomes the work people remember.</p>
-        <span>( EGO Beauty / создано мастерами для мастеров )</span>
-      </section>
-
-      <ProductRail title="выбор мастеров" kicker="( 03 / проверенные хиты )" items={bestsellers} href="/catalog?badge=Хит" />
-
-      <section className="editorial-effects shell">
-        <div className="editorial-section-title"><span>( 04 )</span><h2>эффекты</h2></div>
-        <div className="editorial-effect-grid">
-          <Link href="/catalog?collection=Mousse"><Image src="/products/945458176-2.webp" alt="Текстура Mousse" fill sizes="33vw" /><span>mousse / рабочий нюд</span></Link>
-          <Link href="/catalog?collection=Ice%20Cat"><Image src="/products/1272155829-2.webp" alt="Текстура Ice Cat" fill sizes="33vw" /><span>ice cat / морозное сияние</span></Link>
-          <Link href="/catalog?collection=Glow%20Cat"><Image src="/products/1141151914-2.webp" alt="Текстура Glow Cat" fill sizes="33vw" /><span>glow cat / шёлковая кошка</span></Link>
+      <section className="figma-promos shell" aria-labelledby="promo-heading">
+        <h2 className="visually-hidden" id="promo-heading">Подборки EGO Beauty</h2>
+        <div className="figma-promo-grid">
+          {promoCards.map((card) => (
+            <Link className={`figma-promo-card ${card.className}`} href={card.href} key={card.title}>
+              <Image src={card.image} alt="" fill sizes="(max-width: 760px) 100vw, 50vw" />
+              <span>{card.title}</span>
+            </Link>
+          ))}
         </div>
-      </section>
-
-      <section className="editorial-fortune shell">
-        <div className="editorial-fortune-wheel" aria-hidden="true"><span>EGO</span><i>300</i></div>
-        <div><span>( колесо фортуны )</span><h2>один шанс.<br />настоящий приз.</h2><p>Подпишитесь на Telegram, укажите ник и испытайте удачу. Каждый 300-й участник получает суперприз.</p><Link href="/fortune">( крутить колесо )</Link></div>
-      </section>
-
-      <section className="editorial-contact shell">
-        <div><span>( сотрудничество )</span><h2>растём вместе</h2></div>
-        <p>Магазины, студии, школы, преподаватели и амбассадоры — подберём формат под ваш проект и географию.</p>
-        <Link href="/cooperation">( оставить заявку )</Link>
       </section>
     </>
   );

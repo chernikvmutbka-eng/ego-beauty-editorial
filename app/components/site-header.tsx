@@ -1,18 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-import { catalogTree, products } from "@/lib/products";
+import { useEffect, useState } from "react";
+import { catalogTree } from "@/lib/products";
 import { useStore } from "./store-provider";
-
-const wbBrandUrl = "https://www.wildberries.ru/brands/ego-beauty?sort=popular&page=1";
-const ozonSearchUrl = "https://www.ozon.ru/search/?text=EGO%20Beauty";
 
 export function SiteHeader() {
   const { cartCount, favorites } = useStore();
   const [catalogOpen, setCatalogOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const headerRef = useRef<HTMLElement>(null);
+  const [activeCategory, setActiveCategory] = useState("Гель-лак");
+  const activeSection = catalogTree.find((section) => section.name === activeCategory) ?? catalogTree[0];
 
   useEffect(() => {
     const close = (event: KeyboardEvent) => {
@@ -25,79 +23,78 @@ export function SiteHeader() {
     return () => window.removeEventListener("keydown", close);
   }, []);
 
+  const closeMenus = () => {
+    setCatalogOpen(false);
+    setMobileOpen(false);
+  };
+
   return (
-    <>
-      <div className="editorial-ticker" aria-label="Новинки EGO Beauty">
-        <div><span>НОВИНКИ</span><i /> <span>ШЁЛКОВЫЕ КОШКИ</span><i /> <span>GLOW CAT</span><i /> <span>NEON CAT</span><i /> <span>ГЕЛЬ-ЛАК</span><i /></div>
-      </div>
-      <header className="site-header editorial-header" ref={headerRef}>
-        <div className="editorial-header-grid shell">
-          <nav className="editorial-nav editorial-nav-left" aria-label="Основная навигация">
-            <button type="button" onClick={() => setCatalogOpen((value) => !value)} aria-expanded={catalogOpen} aria-controls="editorial-catalog">( каталог )</button>
-            <Link href="/catalog?badge=Новинка">( новинки )</Link>
-            <Link href="/fortune">( колесо фортуны )</Link>
-            <Link href="/about">( о бренде )</Link>
-            <Link href="/info">( информация )</Link>
+    <header className="figma-site-header">
+      <div className="figma-header-shell shell">
+        <div className="figma-header-bar">
+          <nav className="figma-header-left" aria-label="Основная навигация">
+            <button className="figma-hamburger" type="button" onClick={() => setMobileOpen((value) => !value)} aria-label="Открыть меню" aria-expanded={mobileOpen}>
+              <i /><i />
+            </button>
+            <button className="figma-header-link" type="button" onClick={() => setCatalogOpen((value) => !value)} aria-expanded={catalogOpen} aria-controls="figma-catalog-menu">Каталог</button>
+            <Link href="/catalog?badge=Новинка">Новинки</Link>
+            <Link href="/about">О бренде</Link>
           </nav>
 
-          <Link className="editorial-logo" href="/" aria-label="EGO Beauty — главная">
-            <span>EGO</span><small>BEAUTY</small>
+          <Link className="figma-logo" href="/" aria-label="EGO Beauty — главная">
+            <strong>eGo</strong><span>beauty</span>
           </Link>
 
-          <nav className="editorial-nav editorial-nav-right" aria-label="Маркетплейсы и сервисы">
-            <a href={wbBrandUrl} target="_blank" rel="noreferrer">( WB )</a>
-            <a href={ozonSearchUrl} target="_blank" rel="noreferrer">( OZ )</a>
-            <Link href="/search">( поиск )</Link>
-            <Link href="/account?tab=favorites" aria-label={`Избранное: ${favorites.length}`}>( ♡ {favorites.length} )</Link>
-            <Link href="/cart" aria-label={`Корзина: ${cartCount}`}>( сумка {cartCount} )</Link>
+          <nav className="figma-header-right" aria-label="Сервисы">
+            <Link href="/fortune">Колесо фортуны</Link>
+            <Link className="figma-icon-link search-mark" href="/search" aria-label="Поиск" />
+            <Link className="figma-icon-link heart-mark" href="/account?tab=favorites" aria-label={`Избранное: ${favorites.length}`}><span>{favorites.length || ""}</span></Link>
+            <Link className="figma-icon-link bag-mark" href="/cart" aria-label={`Корзина: ${cartCount}`}><span>{cartCount}</span></Link>
           </nav>
-
-          <button className="editorial-menu-button" type="button" onClick={() => setMobileOpen((value) => !value)} aria-expanded={mobileOpen} aria-controls="mobile-menu">
-            {mobileOpen ? "( закрыть )" : "( меню )"}
-          </button>
         </div>
 
         {catalogOpen && (
-          <div className="editorial-catalog-panel" id="editorial-catalog">
-            <div className="editorial-catalog-grid shell">
-              <div className="editorial-catalog-intro"><span>( каталог )</span><strong>{products.length} актуальных позиций</strong><Link href="/catalog" onClick={() => setCatalogOpen(false)}>смотреть всё →</Link></div>
-              {catalogTree.map((section, index) => (
-                <div className="editorial-catalog-column" key={section.name}>
-                  <Link href={`/catalog?category=${encodeURIComponent(section.name)}`} onClick={() => setCatalogOpen(false)}><small>{String(index + 1).padStart(2, "0")}</small>{section.name}</Link>
-                  {section.subcategories.map((subcategory) => <Link key={subcategory} href={`/catalog?category=${encodeURIComponent(section.name)}&subcategory=${encodeURIComponent(subcategory)}`} onClick={() => setCatalogOpen(false)}>{subcategory}</Link>)}
-                </div>
+          <div className="figma-mega-menu" id="figma-catalog-menu">
+            <div className="figma-mega-categories">
+              {catalogTree.map((section) => (
+                <button className={section.name === activeSection.name ? "active" : ""} type="button" key={section.name} onMouseEnter={() => setActiveCategory(section.name)} onFocus={() => setActiveCategory(section.name)} onClick={() => setActiveCategory(section.name)}>
+                  <span>{section.name}</span><i>→</i>
+                </button>
+              ))}
+            </div>
+            <div className="figma-mega-subcategories">
+              <p>{activeSection.name}</p>
+              <Link className="figma-mega-all" href={`/catalog?category=${encodeURIComponent(activeSection.name)}`} onClick={closeMenus}>Смотреть всё <span>→</span></Link>
+              {activeSection.subcategories.map((subcategory) => (
+                <Link key={subcategory} href={`/catalog?category=${encodeURIComponent(activeSection.name)}&subcategory=${encodeURIComponent(subcategory)}`} onClick={closeMenus}>{subcategory}<span>→</span></Link>
               ))}
             </div>
           </div>
         )}
 
         {mobileOpen && (
-          <div className="editorial-mobile-menu" id="mobile-menu">
-            <nav className="shell">
-              <Link href="/catalog" onClick={() => setMobileOpen(false)}>( каталог )</Link>
-              <Link href="/catalog?badge=Новинка" onClick={() => setMobileOpen(false)}>( новинки )</Link>
-              <Link href="/fortune" onClick={() => setMobileOpen(false)}>( колесо фортуны )</Link>
-              <Link href="/about" onClick={() => setMobileOpen(false)}>( о бренде )</Link>
-              <Link href="/info" onClick={() => setMobileOpen(false)}>( информация )</Link>
-              <Link href="/search" onClick={() => setMobileOpen(false)}>( поиск )</Link>
-              <a href={wbBrandUrl} target="_blank" rel="noreferrer">( Wildberries )</a>
-              <a href={ozonSearchUrl} target="_blank" rel="noreferrer">( Ozon )</a>
-            </nav>
-          </div>
+          <nav className="figma-mobile-menu" aria-label="Мобильное меню">
+            <Link href="/catalog" onClick={closeMenus}>Каталог</Link>
+            <Link href="/catalog?badge=Новинка" onClick={closeMenus}>Новинки</Link>
+            <Link href="/about" onClick={closeMenus}>О бренде</Link>
+            <Link href="/fortune" onClick={closeMenus}>Колесо фортуны</Link>
+            <Link href="/search" onClick={closeMenus}>Поиск</Link>
+            <Link href="/info" onClick={closeMenus}>Информация</Link>
+          </nav>
         )}
-      </header>
-    </>
+      </div>
+    </header>
   );
 }
 
 export function MobileNav() {
   const { cartCount, favorites } = useStore();
   return (
-    <nav className="mobile-nav editorial-mobile-bar" aria-label="Мобильная навигация">
-      <Link href="/">( главная )</Link>
-      <Link href="/catalog">( каталог )</Link>
-      <Link href="/account?tab=favorites">( ♡ {favorites.length} )</Link>
-      <Link href="/cart">( сумка {cartCount} )</Link>
+    <nav className="figma-mobile-bar" aria-label="Быстрая навигация">
+      <Link href="/">Главная</Link>
+      <Link href="/catalog">Каталог</Link>
+      <Link href="/account?tab=favorites">♡ {favorites.length}</Link>
+      <Link href="/cart">Корзина {cartCount}</Link>
     </nav>
   );
 }

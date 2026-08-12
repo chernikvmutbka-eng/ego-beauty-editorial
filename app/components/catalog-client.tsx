@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { track } from "@/lib/analytics";
@@ -15,6 +17,23 @@ const filterDefinitions = [
   { key: "volume", label: "Объём", values: ["10 мл", "15 мл", "4 × 15 мл", "6 × 15 мл"] },
 ] as const;
 
+const categoryImages = [
+  "/products/945458176.webp", "/products/1141151914.webp", "/products/945498416.webp",
+  "/products/1301619545.webp", "/products/1272203422.webp", "/products/1272097452.webp",
+  "/products/1046570904.webp", "/products/945490950.webp", "/products/1272155829.webp",
+  "/products/1272216875.webp", "/products/945494162.webp",
+];
+
+function CatalogHero() {
+  return (
+    <section className="figma-catalog-hero">
+      <Image src="/brand/banner-1.jpg" alt="Каталог EGO Beauty" fill priority sizes="100vw" />
+      <div aria-hidden="true" />
+      <h1>каталог</h1>
+    </section>
+  );
+}
+
 export function CatalogClient({ mode = "catalog", initialQuery = "" }: { mode?: "catalog" | "search"; initialQuery?: string }) {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -28,9 +47,11 @@ export function CatalogClient({ mode = "catalog", initialQuery = "" }: { mode?: 
   const minPrice = Number(searchParams.get("minPrice") ?? 0);
   const maxPrice = Number(searchParams.get("maxPrice") ?? 0);
   const stockOnly = searchParams.get("stock") !== "all";
-
-  const active = useMemo(() => Object.fromEntries(filterDefinitions.map((filter) => [filter.key, searchParams.get(filter.key) ?? ""])), [searchParams]);
   const badge = searchParams.get("badge") ?? "";
+  const active = useMemo<Record<string, string>>(
+    () => Object.fromEntries(filterDefinitions.map((filter) => [filter.key, searchParams.get(filter.key) ?? ""])),
+    [searchParams],
+  );
 
   const filtered = useMemo(() => {
     const needle = query.toLocaleLowerCase("ru-RU").replace(/ё/g, "е").trim();
@@ -71,43 +92,65 @@ export function CatalogClient({ mode = "catalog", initialQuery = "" }: { mode?: 
     ...(minPrice ? [{ key: "minPrice", value: String(minPrice), label: `от ${minPrice} ₽` }] : []),
     ...(maxPrice ? [{ key: "maxPrice", value: String(maxPrice), label: `до ${maxPrice} ₽` }] : []),
   ];
+  const hasListingContext = mode === "search" || Boolean(query || chips.length || searchParams.get("stock") === "all");
+  const listingTitle = query ? `результаты: «${query}»` : active.subcategory || active.category || active.collection || badge || "все товары";
 
   return (
     <>
-      <header className="catalog-heading">
-        <p className="eyebrow">EGO Beauty / online store</p>
-        <h1>{mode === "search" ? (query ? `Результаты: «${query}»` : "Поиск") : "Каталог"}</h1>
-        <p>{mode === "search" ? "Ищем по названию, артикулу, номеру оттенка, коллекции и эффекту." : "Профессиональные материалы для укрепления, моделирования и дизайна ногтей. Актуальные цены и ассортимент — снимок витрины EGO Beauty на 04.08.2026."}</p>
-      </header>
+      <CatalogHero />
 
-      {mode === "search" && (
-        <form className="catalog-search" action="/search"><input name="q" defaultValue={query} placeholder="Mousse, 945458176, кошачий глаз…" aria-label="Поисковый запрос" /><button>Найти</button></form>
-      )}
-
-      <div className="catalog-toolbar">
-        <div><button className="filter-open" type="button" onClick={() => setFiltersOpen(true)}>Фильтры <b>{chips.length || ""}</b></button><span>{productCountLabel(filtered.length)}</span></div>
-        <div><label>Сортировка<select value={sort} onChange={(event) => { setSort(event.target.value); updateParam("sort", event.target.value); }}><option value="popular">По популярности</option><option value="rating">По рейтингу</option><option value="price-asc">Сначала дешевле</option><option value="price-desc">Сначала дороже</option></select></label><div className="grid-switch" aria-label="Вид каталога"><button className={grid === "standard" ? "active" : ""} onClick={() => setGrid("standard")} aria-label="Обычная сетка">▦</button><button className={grid === "compact" ? "active" : ""} onClick={() => setGrid("compact")} aria-label="Компактная сетка">▦▦</button></div></div>
-      </div>
-
-      {chips.length > 0 && <div className="active-filters">{chips.map((chip) => <button key={`${chip.key}-${chip.value}`} onClick={() => updateParam(chip.key, "")}>{chip.label}<span>×</span></button>)}<button className="clear-filters" onClick={() => router.replace(pathname)}>Сбросить всё</button></div>}
-
-      <div className="catalog-layout">
-        <aside className={`filter-drawer ${filtersOpen ? "open" : ""}`} aria-label="Фильтры каталога">
-          <div className="filter-mobile-head"><strong>Фильтры</strong><button onClick={() => setFiltersOpen(false)} aria-label="Закрыть фильтры">×</button></div>
-          {filterDefinitions.map((filter) => (
-            <details key={filter.key} open>
-              <summary>{filter.label}</summary>
-              <div className="filter-values">{filter.values.map((value) => <label key={value}><input type="radio" name={filter.key} checked={active[filter.key] === value} onChange={() => updateParam(filter.key, active[filter.key] === value ? "" : value)} /><span>{value}</span><small>{products.filter((product) => filter.key === "category" ? product.category === value : filter.key === "subcategory" ? product.subcategory === value : filter.key === "collection" ? product.collection === value : filter.key === "color" ? product.colorGroup === value : filter.key === "effect" ? product.effect === value : product.volume === value).length}</small></label>)}</div>
-            </details>
-          ))}
-          <details open><summary>Цена</summary><div className="price-filter"><input key={`min-${minPrice}`} inputMode="numeric" defaultValue={minPrice || ""} placeholder="от 500" aria-label="Минимальная цена" onBlur={(event) => updateParam("minPrice", event.target.value.replace(/\D/g, ""))} /><input key={`max-${maxPrice}`} inputMode="numeric" defaultValue={maxPrice || ""} placeholder="до 1 742" aria-label="Максимальная цена" onBlur={(event) => updateParam("maxPrice", event.target.value.replace(/\D/g, ""))} /></div></details>
-          <div className="toggle-filters"><label><span>Только в наличии</span><input type="checkbox" checked={stockOnly} onChange={(event) => updateParam("stock", event.target.checked ? "" : "all")} /></label><label><span>Со скидкой</span><input type="checkbox" checked={badge === "Sale"} onChange={(event) => updateParam("badge", event.target.checked ? "Sale" : "")} /></label></div>
-          <button className="filter-apply primary-button" onClick={() => setFiltersOpen(false)}>Показать {filtered.length}</button>
-        </aside>
-        <section className="catalog-results" aria-busy={loading}>
-          {loading ? <div className={`catalog-grid ${grid}`}>{Array.from({ length: 8 }).map((_, index) => <div className="product-skeleton" key={index}><div /><span /><span /></div>)}</div> : filtered.length ? <><div className={`catalog-grid ${grid}`}>{filtered.slice(0, visible).map((product) => <ProductCard key={product.id} product={product} />)}</div>{visible < filtered.length && <button className="load-more" onClick={() => setVisible((count) => count + 8)}>Показать ещё <span>{filtered.length - visible}</span></button>}</> : <div className="catalog-empty"><strong>По этим параметрам пока ничего нет</strong><p>Сбросьте один из фильтров или откройте всю палитру.</p><button className="primary-button" onClick={() => router.replace(pathname)}>Сбросить фильтры</button></div>}
+      {!hasListingContext ? (
+        <section className="figma-category-directory">
+          <nav className="figma-breadcrumb-chips" aria-label="Хлебные крошки"><Link href="/">Главная</Link><span>Каталог</span></nav>
+          <div className="figma-directory-grid">
+            {catalogTree.map((section, index) => (
+              <Link href={`/catalog?category=${encodeURIComponent(section.name)}`} className="figma-directory-card" key={section.name}>
+                <div><h2>{section.name}</h2><span>Смотреть</span></div>
+                <Image src={categoryImages[index]} alt="" fill sizes="(max-width: 720px) 46vw, 24vw" />
+              </Link>
+            ))}
+          </div>
         </section>
-      </div>
+      ) : (
+        <section className="figma-listing">
+          <nav className="figma-breadcrumb-chips" aria-label="Хлебные крошки">
+            <Link href="/">Главная</Link><Link href="/catalog">Каталог</Link>
+            {active.category && <Link href={`/catalog?category=${encodeURIComponent(active.category)}`}>{active.category}</Link>}
+            <span>{active.subcategory || active.collection || badge || (query ? "Поиск" : "Товары")}</span>
+          </nav>
+
+          {mode === "search" && <form className="catalog-search" action="/search"><input name="q" defaultValue={query} placeholder="Mousse, артикул, оттенок…" aria-label="Поисковый запрос" /><button>Найти</button></form>}
+
+          <div className="figma-listing-title">
+            <div><p>{productCountLabel(filtered.length)}</p><h2>{listingTitle.toLocaleLowerCase("ru-RU")}</h2></div>
+            <div className="figma-toolbar-icons"><button type="button" onClick={() => setFiltersOpen(true)} aria-label="Открыть фильтры">≡</button><button type="button" onClick={() => setGrid((value) => value === "standard" ? "compact" : "standard")} aria-label="Изменить вид">⊞</button></div>
+          </div>
+
+          <div className="catalog-toolbar figma-catalog-toolbar">
+            <button className="filter-open" type="button" onClick={() => setFiltersOpen(true)}>Фильтры <b>{chips.length || ""}</b></button>
+            <label>Сортировка<select value={sort} onChange={(event) => { setSort(event.target.value); updateParam("sort", event.target.value); }}><option value="popular">По популярности</option><option value="rating">По рейтингу</option><option value="price-asc">Сначала дешевле</option><option value="price-desc">Сначала дороже</option></select></label>
+          </div>
+
+          {chips.length > 0 && <div className="active-filters">{chips.map((chip) => <button key={`${chip.key}-${chip.value}`} onClick={() => updateParam(chip.key, "")}>{chip.label}<span>×</span></button>)}<button className="clear-filters" onClick={() => router.replace(pathname)}>Сбросить всё</button></div>}
+
+          <aside className={`filter-drawer figma-filter-drawer ${filtersOpen ? "open" : ""}`} aria-label="Фильтры каталога">
+            <div className="filter-mobile-head"><strong>Фильтры</strong><button onClick={() => setFiltersOpen(false)} aria-label="Закрыть фильтры">×</button></div>
+            {filterDefinitions.map((filter) => (
+              <details key={filter.key} open>
+                <summary>{filter.label}</summary>
+                <div className="filter-values">{filter.values.map((value) => <label key={value}><input type="radio" name={filter.key} checked={active[filter.key] === value} onChange={() => updateParam(filter.key, active[filter.key] === value ? "" : value)} /><span>{value}</span><small>{products.filter((product) => filter.key === "category" ? product.category === value : filter.key === "subcategory" ? product.subcategory === value : filter.key === "collection" ? product.collection === value : filter.key === "color" ? product.colorGroup === value : filter.key === "effect" ? product.effect === value : product.volume === value).length}</small></label>)}</div>
+              </details>
+            ))}
+            <details open><summary>Цена</summary><div className="price-filter"><input key={`min-${minPrice}`} inputMode="numeric" defaultValue={minPrice || ""} placeholder="от 500" aria-label="Минимальная цена" onBlur={(event) => updateParam("minPrice", event.target.value.replace(/\D/g, ""))} /><input key={`max-${maxPrice}`} inputMode="numeric" defaultValue={maxPrice || ""} placeholder="до 1 742" aria-label="Максимальная цена" onBlur={(event) => updateParam("maxPrice", event.target.value.replace(/\D/g, ""))} /></div></details>
+            <div className="toggle-filters"><label><span>Только в наличии</span><input type="checkbox" checked={stockOnly} onChange={(event) => updateParam("stock", event.target.checked ? "" : "all")} /></label><label><span>Со скидкой</span><input type="checkbox" checked={badge === "Sale"} onChange={(event) => updateParam("badge", event.target.checked ? "Sale" : "")} /></label></div>
+            <button className="filter-apply primary-button" onClick={() => setFiltersOpen(false)}>Показать {filtered.length}</button>
+          </aside>
+
+          <section className="catalog-results" aria-busy={loading}>
+            {loading ? <div className={`catalog-grid ${grid}`}>{Array.from({ length: 8 }).map((_, index) => <div className="product-skeleton" key={index}><div /><span /><span /></div>)}</div> : filtered.length ? <><div className={`catalog-grid ${grid}`}>{filtered.slice(0, visible).map((product) => <ProductCard key={product.id} product={product} />)}</div>{visible < filtered.length && <button className="load-more" onClick={() => setVisible((count) => count + 8)}>Показать ещё <span>{filtered.length - visible}</span></button>}</> : <div className="catalog-empty"><strong>По этим параметрам пока ничего нет</strong><p>Сбросьте один из фильтров или откройте всю палитру.</p><button className="primary-button" onClick={() => router.replace(pathname)}>Сбросить фильтры</button></div>}
+          </section>
+        </section>
+      )}
     </>
   );
 }

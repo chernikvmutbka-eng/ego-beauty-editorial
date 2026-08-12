@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { CatalogClient } from "../components/catalog-client";
 
 export const metadata: Metadata = {
@@ -9,8 +8,7 @@ export const metadata: Metadata = {
 
 export default function CatalogPage() {
   return (
-    <div className="catalog-page shell">
-      <nav className="breadcrumbs" aria-label="Хлебные крошки"><Link href="/">Главная</Link><span>/</span><span>Каталог</span></nav>
+    <div className="catalog-page figma-catalog-page shell">
       <CatalogClient />
     </div>
   );

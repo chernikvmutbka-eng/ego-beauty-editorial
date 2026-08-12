@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
 import "./globals.css";
 import "./editorial.css";
+import "./figma-refresh.css";
 import { StoreProvider } from "./components/store-provider";
 import { MobileNav, SiteHeader } from "./components/site-header";
 import { SiteFooter } from "./components/site-footer";
@@ -29,8 +30,8 @@ export async function generateMetadata(): Promise<Metadata> {
     icons: { icon: [{ url: "/favicon.svg", type: "image/svg+xml" }] },
     alternates: { canonical: "/" },
     robots: { index: true, follow: true },
-    openGraph: { type: "website", locale: "ru_RU", siteName: "EGO Beauty", title, description, url: "/", images: [{ url: "/og.png", width: 1200, height: 630, alt: "EGO Beauty — профессиональные материалы для маникюра" }] },
-    twitter: { card: "summary_large_image", title, description, images: ["/og.png"] },
+    openGraph: { type: "website", locale: "ru_RU", siteName: "EGO Beauty", title, description, url: "/", images: [{ url: "/og-figma.png", width: 1536, height: 864, alt: "EGO Beauty — профессиональные материалы для маникюра" }] },
+    twitter: { card: "summary_large_image", title, description, images: ["/og-figma.png"] },
   };
 }
 
