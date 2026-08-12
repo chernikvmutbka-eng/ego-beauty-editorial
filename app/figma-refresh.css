@@ -20,6 +20,7 @@ main { min-height: 60vh; }
 
 /* Header and catalog menu */
 .figma-site-header { position: sticky; top: 0; z-index: 150; padding: 14px 0 8px; background: rgba(255,255,255,.92); backdrop-filter: blur(16px); }
+.figma-benefit-strip { min-height: 30px; margin-bottom: 7px; padding: 5px 18px; display: flex; align-items: center; justify-content: space-between; gap: 20px; border-radius: 999px; background: var(--figma-olive); color: white; font-size: 9px; letter-spacing: .04em; text-transform: uppercase; }
 .figma-header-shell { position: relative; }
 .figma-header-bar { min-height: 66px; padding: 0 22px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 20px; border-radius: 22px; background: var(--figma-soft); }
 .figma-header-left, .figma-header-right { display: flex; align-items: center; gap: clamp(15px, 2vw, 30px); font-size: 12px; }
@@ -184,6 +185,8 @@ main { min-height: 60vh; }
   :root { --shell: calc(100vw - 20px); --figma-radius: 20px; }
   body { padding-bottom: calc(62px + env(safe-area-inset-bottom)); }
   .figma-site-header { padding-top: 8px; }
+  .figma-benefit-strip { min-height: 26px; justify-content: center; }
+  .figma-benefit-strip span { display: none; }
   .figma-header-bar { min-height: 58px; padding: 0 14px; grid-template-columns: 1fr auto 1fr; border-radius: 17px; }
   .figma-header-left > *:not(.figma-hamburger), .figma-header-right > *:not(.bag-mark) { display: none; }
   .figma-header-right { justify-content: flex-end; }

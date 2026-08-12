@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="Оформление заказа EGO Beauty.">
+  <title>Оформление заказа — EGO Beauty</title>
+  <link rel="icon" href="./assets/ego-logo.png">
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./menu.css">
+  <link rel="stylesheet" href="./storefront.css">
+  <script src="./storefront.js" defer></script>
+</head>
+<body data-page="checkout">
+  <a class="skip-link" href="#main">К основному содержанию</a>
+  <div id="site-header"></div>
+  <main id="main" class="checkout-page shell"><div id="checkout-main">
+    <nav class="breadcrumbs"><a href="./catalog.html">Каталог</a><button type="button" data-cart>Корзина</button><span>Оформление</span></nav>
+    <p class="eyebrow">Безопасное оформление</p><h1>оформление</h1>
+    <form class="checkout-layout" id="checkout-form">
+      <div class="checkout-fields">
+        <fieldset class="checkout-step"><legend><span>01</span> Контактные данные</legend><div class="form-grid"><label>Имя<input name="name" required autocomplete="name"></label><label>Телефон<input name="phone" required type="tel" placeholder="+7 999 000-00-00" autocomplete="tel"></label><label class="wide">Email<input name="email" required type="email" autocomplete="email"></label></div></fieldset>
+        <fieldset class="checkout-step"><legend><span>02</span> Получение</legend><div class="choice-cards"><label><input name="delivery" type="radio" value="pickup" checked><span><strong>Пункт выдачи</strong><small>1–3 дня · бесплатно от 3 000 ₽</small></span></label><label><input name="delivery" type="radio" value="courier"><span><strong>Курьер</strong><small>Выберите удобный адрес</small></span></label></div><div class="form-grid"><label>Город<input name="city" value="Москва" required autocomplete="address-level2"></label><label>Адрес или пункт выдачи<input name="address" required autocomplete="street-address"></label></div></fieldset>
+        <fieldset class="checkout-step"><legend><span>03</span> Оплата</legend><div class="choice-cards"><label><input name="payment" type="radio" value="confirmation" checked><span><strong>После подтверждения</strong><small>Менеджер пришлёт ссылку</small></span></label><label><input name="payment" type="radio" value="sbp"><span><strong>СБП</strong><small>Будет доступно после подключения кассы</small></span></label></div><label class="comment-field">Комментарий<textarea name="comment" rows="4" placeholder="Пожелания к заказу"></textarea></label></fieldset>
+        <label class="consent"><input required type="checkbox"><span>Я согласен с обработкой персональных данных и условиями оформления заказа.</span></label>
+        <button class="checkout-submit">Подтвердить заказ</button>
+      </div>
+      <aside class="checkout-summary-card" id="checkout-order-summary"></aside>
+    </form>
+  </div></main>
+  <div id="site-footer"></div>
+  <div id="overlays"></div>
+</body>
+</html>

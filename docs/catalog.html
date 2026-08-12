@@ -9,7 +9,8 @@
   <link rel="icon" href="./assets/ego-logo.png">
   <link rel="stylesheet" href="./styles.css">
   <link rel="stylesheet" href="./menu.css">
-  <script src="./app.js" defer></script>
+  <link rel="stylesheet" href="./storefront.css">
+  <script src="./storefront.js" defer></script>
 </head>
 <body data-page="catalog">
   <a class="skip-link" href="#main">К основному содержанию</a>
@@ -23,6 +24,13 @@
       <div><p id="product-count">Товары EGO Beauty</p><h2 id="catalog-title">все товары</h2></div>
       <button class="round-button" id="filter-toggle" type="button" aria-expanded="false" aria-controls="catalog-filters">≡<span class="visually-hidden">Фильтры</span></button>
     </section>
+
+    <form class="catalog-search-bar" id="catalog-search-form">
+      <input id="catalog-search-input" name="q" type="search" placeholder="Название, коллекция, оттенок или артикул" aria-label="Поиск по каталогу">
+      <button>Найти</button>
+    </form>
+
+    <div class="active-filter-chips" id="active-filters"></div>
 
     <section class="catalog-controls" id="catalog-filters">
       <div class="filter-group" data-filter="category">
@@ -38,8 +46,13 @@
         <button data-value="Glow Cat">Glow Cat</button>
         <button data-value="Ice Cat">Ice Cat</button>
       </div>
+      <div class="price-fields">
+        <input data-price="minPrice" inputmode="numeric" placeholder="Цена от" aria-label="Минимальная цена">
+        <input data-price="maxPrice" inputmode="numeric" placeholder="Цена до" aria-label="Максимальная цена">
+      </div>
+      <label class="stock-check"><input id="stock-only" type="checkbox" checked> Только в наличии</label>
       <label class="sort-control">Сортировка
-        <select id="sort-products"><option value="popular">По популярности</option><option value="price-asc">Сначала дешевле</option><option value="price-desc">Сначала дороже</option></select>
+        <select id="sort-products"><option value="popular">По популярности</option><option value="rating">По рейтингу</option><option value="price-asc">Сначала дешевле</option><option value="price-desc">Сначала дороже</option></select>
       </label>
     </section>
 

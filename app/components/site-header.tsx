@@ -36,6 +36,11 @@ export function SiteHeader() {
 
   return (
     <header className="figma-site-header">
+      <div className="figma-benefit-strip shell">
+        <span>Бесплатная доставка от 3 000 ₽</span>
+        <Link href="/account">EGO Club: 5% бонусами</Link>
+        <span>Промокод EGO10 на первый заказ</span>
+      </div>
       <div className="figma-header-shell shell">
         <div className="figma-header-bar">
           <nav className="figma-header-left" aria-label="Основная навигация">
