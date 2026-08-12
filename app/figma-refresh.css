@@ -188,8 +188,17 @@ main { min-height: 60vh; }
   .figma-header-left > *:not(.figma-hamburger), .figma-header-right > *:not(.bag-mark) { display: none; }
   .figma-header-right { justify-content: flex-end; }
   .figma-logo strong { font-size: 25px; }
-  .figma-mobile-menu { position: absolute; top: calc(100% + 7px); left: 0; right: 0; padding: 24px; display: grid; gap: 3px; border-radius: 22px; background: var(--figma-soft); box-shadow: 0 25px 60px rgba(0,0,0,.15); }
-  .figma-mobile-menu a { padding: 12px 0; border-bottom: 1px solid #d3d3cf; font-size: 20px; text-transform: lowercase; }
+  .figma-mobile-menu { position: absolute; top: calc(100% + 7px); left: 0; right: 0; max-height: calc(100svh - 90px); padding: 24px; overflow-y: auto; display: grid; gap: 3px; border-radius: 22px; background: var(--figma-soft); box-shadow: 0 25px 60px rgba(0,0,0,.15); }
+  .figma-mobile-menu > a { padding: 12px 0; border-bottom: 1px solid #d3d3cf; font-size: 20px; text-transform: lowercase; }
+  .figma-mobile-catalog-trigger { width: 100%; padding: 12px 0; display: flex; align-items: center; justify-content: space-between; border: 0; border-bottom: 1px solid #d3d3cf; background: none; font-size: 20px; text-align: left; text-transform: lowercase; }
+  .figma-mobile-catalog-trigger i { font-style: normal; font-size: 22px; transition: transform .2s ease; }
+  .figma-mobile-catalog-trigger[aria-expanded="true"] i { transform: rotate(180deg); }
+  .figma-mobile-catalog { padding: 8px 0 12px 14px; border-bottom: 1px solid #d3d3cf; }
+  .figma-mobile-menu .figma-mobile-all { padding: 10px 0; display: flex; justify-content: space-between; border: 0; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+  .figma-mobile-category > button { width: 100%; min-height: 43px; padding: 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; border: 0; border-bottom: 1px solid #d8d8d4; background: none; font-size: 15px; text-align: left; text-transform: lowercase; }
+  .figma-mobile-category > button i { font-style: normal; font-size: 18px; font-weight: 400; }
+  .figma-mobile-subcategories { padding: 5px 0 10px 12px; display: grid; }
+  .figma-mobile-menu .figma-mobile-subcategories a { padding: 9px 0; border: 0; color: #686863; font-size: 13px; text-transform: lowercase; }
   .figma-mega-menu { display: none; }
   .figma-mobile-bar { position: fixed; z-index: 300; left: 8px; right: 8px; bottom: calc(7px + env(safe-area-inset-bottom)); min-height: 52px; padding: 6px; display: grid; grid-template-columns: repeat(4, 1fr); align-items: center; border-radius: 18px; background: rgba(37,39,32,.96); color: white; box-shadow: 0 10px 30px rgba(0,0,0,.2); backdrop-filter: blur(12px); }
   .figma-mobile-bar a { text-align: center; font-size: 9px; }

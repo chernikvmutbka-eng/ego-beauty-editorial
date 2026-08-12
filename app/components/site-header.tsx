@@ -9,6 +9,8 @@ export function SiteHeader() {
   const { cartCount, favorites } = useStore();
   const [catalogOpen, setCatalogOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileCatalogOpen, setMobileCatalogOpen] = useState(false);
+  const [mobileCategoryOpen, setMobileCategoryOpen] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState("Гель-лак");
   const activeSection = catalogTree.find((section) => section.name === activeCategory) ?? catalogTree[0];
 
@@ -17,6 +19,8 @@ export function SiteHeader() {
       if (event.key === "Escape") {
         setCatalogOpen(false);
         setMobileOpen(false);
+        setMobileCatalogOpen(false);
+        setMobileCategoryOpen(null);
       }
     };
     window.addEventListener("keydown", close);
@@ -26,6 +30,8 @@ export function SiteHeader() {
   const closeMenus = () => {
     setCatalogOpen(false);
     setMobileOpen(false);
+    setMobileCatalogOpen(false);
+    setMobileCategoryOpen(null);
   };
 
   return (
@@ -74,7 +80,42 @@ export function SiteHeader() {
 
         {mobileOpen && (
           <nav className="figma-mobile-menu" aria-label="Мобильное меню">
-            <Link href="/catalog" onClick={closeMenus}>Каталог</Link>
+            <button
+              className="figma-mobile-catalog-trigger"
+              type="button"
+              onClick={() => setMobileCatalogOpen((value) => !value)}
+              aria-expanded={mobileCatalogOpen}
+              aria-controls="figma-mobile-catalog"
+            >
+              <span>Каталог</span><i aria-hidden="true">⌄</i>
+            </button>
+            {mobileCatalogOpen && (
+              <div className="figma-mobile-catalog" id="figma-mobile-catalog">
+                <Link className="figma-mobile-all" href="/catalog" onClick={closeMenus}>Все товары <span>→</span></Link>
+                {catalogTree.map((section) => {
+                  const sectionOpen = mobileCategoryOpen === section.name;
+                  return (
+                    <div className="figma-mobile-category" key={section.name}>
+                      <button
+                        type="button"
+                        onClick={() => setMobileCategoryOpen(sectionOpen ? null : section.name)}
+                        aria-expanded={sectionOpen}
+                      >
+                        <span>{section.name}</span><i aria-hidden="true">{sectionOpen ? "−" : "+"}</i>
+                      </button>
+                      {sectionOpen && (
+                        <div className="figma-mobile-subcategories">
+                          <Link href={`/catalog?category=${encodeURIComponent(section.name)}`} onClick={closeMenus}>Смотреть всё</Link>
+                          {section.subcategories.map((subcategory) => (
+                            <Link key={subcategory} href={`/catalog?category=${encodeURIComponent(section.name)}&subcategory=${encodeURIComponent(subcategory)}`} onClick={closeMenus}>{subcategory}</Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
             <Link href="/catalog?badge=Новинка" onClick={closeMenus}>Новинки</Link>
             <Link href="/about" onClick={closeMenus}>О бренде</Link>
             <Link href="/fortune" onClick={closeMenus}>Колесо фортуны</Link>
